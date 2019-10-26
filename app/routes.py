@@ -8,11 +8,13 @@ routes = Blueprint('main', __name__)
 
 @routes.route('/')
 def index():
-    return 'Index'
+    return render_template('index.html')
 
 @routes.route('/profile')
 def profile():
-    return 'Profile'
+    return render_template('profile.html')
+
+
 
 
 
