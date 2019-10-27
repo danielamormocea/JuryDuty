@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Let's Organize!</h3>
+    <div class="box">
+        <form method="POST" action="/organize">
+            <div class="field">
+
+                <div class="control">
+                    <input class="input is-large" type="name" name="contest_name" placeholder="Contest Name" autofocus="">
+                </div>
+
+                <div class="control">
+                    <input class="input is-large" type="number" name="round_no" placeholder="Number of rounds" autofocus="">
+                </div>
+
+                <div class="control">
+                    <input class="input is-large" type="number" name="series_no" placeholder="Number of serier per round" autofocus="">
+                </div>
+            </div>
+
+            <button class="button is-block is-info is-large is-fullwidth">Create Contest</button>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
