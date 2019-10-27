@@ -39,6 +39,11 @@
 									Logout
 								</a>
 								{% endif %}
+								{% if current_user.type_user == 0 %}
+								<a href="{{ url_for('auth.give_perm') }}" class="navbar-item">
+										Give Permissions
+									</a>
+								{% endif %}
                         </div>
                     </div>
                 </div>

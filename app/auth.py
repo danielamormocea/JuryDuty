@@ -14,6 +14,7 @@ def login():
 @auth.route('/login', methods=['POST'])
 def login_post():
 
+
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
@@ -38,14 +39,14 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
-
+    type_user = 2
     user = User.query.filter_by(email=email).first()
 
     if user:
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
 
-    new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
+    new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), type_user=type_user)
 
     db.session.add(new_user)
     db.session.commit()
@@ -53,6 +54,16 @@ def signup_post():
     return redirect(url_for('auth.login'))
 
 
+@auth.route('/give_perm', methods=['GET'])
+def give_perm():
+    return render_template('give_perm.html')
+
+
+@auth.route('/give_perm', methods=['POST'])
+def give_perm_post():
+    flash(request.form.get('username'))
+    flash(request.form.get('admin'))
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/logout')
