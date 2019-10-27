@@ -14,7 +14,14 @@ i = 0
 
 @routes.route('/')
 def index():
-    return render_template('index.html')
+    contestants = Contestant.query.all()
+    # contestans = {<Contestant 1>, <Contestant 12>, <Contestant 2> ....}
+    # contestant[0] -> Contestant 1
+    # contestant[0].age, contestant[0].name ... etc
+    # ex: for contestant in contestants:
+    #       print contestant.age
+    return render_template('index.html', contestans = contestants)
+
 
 @routes.route('/profile')
 def profile():
