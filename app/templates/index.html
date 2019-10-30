@@ -1,10 +1,66 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1 class="title">
-	  Flask Login
+	  Live competition
 </h1>
-<h2 class="subtitle">
-	  BLABLA
-</h2>
+    <body>
+    <div id="white-background">
+    </div>
+    <div id="dlgbox">
+        <div id="dlg-header">Grade Contestant</div>
+        <form method="POST" action="/" class="rate">
+            <input type="radio" id="star5" name="rate_star" value="5" />
+            <label for="star5" title="text">5 stars</label>
+            <input type="radio" id="star4" name="rate" value="4" />
+            <label for="star4" title="text">4 stars</label>
+            <input type="radio" id="star3" name="rate" value="3" />
+            <label for="star3" title="text">3 stars</label>
+            <input type="radio" id="star2" name="rate" value="2" />
+            <label for="star2" title="text">2 stars</label>
+            <input type="radio" id="star1" name="rate" value="1" />
+            <label for="star1" title="text">1 star</label>
+        </form>
+        <div id="dlg-footer">
+            <button onclick="dlgOK()">OK</button>
+            <button onclick="dlgCancel()">Cancel</button>
+        </div>
+    </div>
+
+    <table style="border-spacing: 20px; border-collapse: separate; align-content: center; display: inline-block; float: inherit;">
+            {% for player_row in contestans | batch(2, '&nbsp;') %}
+                <tr>
+                    {% for player in player_row %}
+                        {% if player.name %}
+                            <td>
+                                <button onclick="showDialog({{ current_user_type|tojson }});" style="color:white; font-weight: bold; background-color: transparent; border-color: transparent;"> {{ player.name }}   {{ player.grade }}</button><br>
+                                <span style="font-size: smaller; padding-left: 5px; padding-right: 5px"> {{ player.description }}</span>
+                                <span><br>Round: {{ player.round_no }}  Series: {{ player.series_no }}</span>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            <script type="text/javascript">
+                var elements = document.querySelectorAll("td");
+                elements.forEach(setColor);
+                function setColor(item) {
+                        var i = Math.floor((Math.random() * 4) + 1);;
+                        if (i === 4) {
+                            item.setAttribute("style", "background-image: linear-gradient(to right top, #223e6b, #174e77, #0f5d80, #176c87, #297b8c);border-radius: 20px;text-align:center;border-style:none;");
+                        } else if (i === 1){
+                            item.setAttribute("style", "background-image: linear-gradient(to right top, #131e66, #202b74, #2c3883, #384592, #4353a1);border-radius: 20px;text-align:center;border-style:none;");
+
+                        } else if (i === 2){
+                            item.setAttribute("style", "background-image: linear-gradient(to right top, #1c4651, #1e515f, #205d6d, #21687c, #23748b);border-radius: 20px;text-align:center;border-style:none;");
+
+                        } else if (i === 3){
+                            item.setAttribute("style", "background-image: linear-gradient(to right top, #401155, #003674, #004e7b, #006170, #1e7162);border-radius: 20px;text-align:center;border-style:none;");
+                        } else {
+                            item.setAttribute("style", "background-color:white;border-radius: 20px;text-align:center;border-style:solid;border-color:#af00ef");
+                        }
+                }
+            </script>
+    </table>
+    </body>
+
 {% endblock %}

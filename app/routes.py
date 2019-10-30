@@ -10,18 +10,26 @@ routes = Blueprint('main', __name__)
 contest_name = ""
 contest_rounds = 0
 contest_series = 0
-i = 0
+i = 5
 
-@routes.route('/')
+@routes.route('/index', methods=['GET'])
 def index():
     contestants = Contestant.query.all()
+    user = User.query.filter_by(name=current_user.name).all()
     # contestans = {<Contestant 1>, <Contestant 12>, <Contestant 2> ....}
     # contestant[0] -> Contestant 1
     # contestant[0].age, contestant[0].name ... etc
     # ex: for contestant in contestants:
     #       print contestant.age
-    return render_template('index.html', contestans = contestants)
 
+    return render_template('index.html', contestans = contestants, current_user_type=user[0].type_user)
+
+@routes.route('/index', methods=['POST'])
+def index_post():
+    print(request.form.get("rate-star"))
+    print('ceva')
+
+    return redirect(url_for('main.index'))
 
 @routes.route('/profile')
 def profile():
@@ -59,7 +67,7 @@ def add_contestant_post():
     return redirect(url_for('main.add_contestant_post'))
 
 
-    
+
 
 
 

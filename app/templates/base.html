@@ -5,8 +5,117 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AUTHENTIFICATION</title>
+    <title>Home Bake Competition</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <script type="text/javascript">
+        function dlgCancel(){
+        dlgHide();
+        }
+        function dlgOK(){
+            dlgHide();
+        }
+        function dlgHide(){
+            var whitebg = document.getElementById("white-background");
+            var dlg = document.getElementById("dlgbox");
+            whitebg.style.display = "none";
+            dlg.style.display = "none";
+        }
+        function showDialog(current_user){
+            if (current_user.type_user !== 3) {
+                var whitebg = document.getElementById("white-background");
+                var dlg = document.getElementById("dlgbox");
+                whitebg.style.display = "block";
+                dlg.style.display = "block";
+                var winWidth = window.innerWidth;
+                dlg.style.left = (winWidth / 2) - 480 / 2 + "px";
+                dlg.style.top = "150px";
+            }
+        }
+    </script>
+
+    <style>
+        #white-background{
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #fefefe;
+            opacity: 0.7;
+            z-index: 9999;
+        }
+        #dlgbox{
+            /*initially dialog box is hidden*/
+            display: none;
+            position: fixed;
+            width: 480px;
+            z-index: 9999;
+            border-radius: 10px;
+            background-color: #00d1b2;
+        }
+        #dlg-header{
+            background-color: #00d1b2;
+            color: white;
+            font-size: 20px;
+            padding: 10px;
+            margin: 10px 10px 0 10px;
+        }
+        #dlg-body{
+            background-color: white;
+            color: black;
+            font-size: 14px;
+            padding: 10px;
+            margin: 0 10px 0 10px;
+        }
+        #dlg-footer{
+            background-color: #f2f2f2;
+            text-align: right;
+            padding: 10px;
+            margin: 0 10px 10px 10px;
+        }
+        #dlg-footer button{
+            background-color: #00d1b2;
+            color: white;
+            padding: 5px;
+            border: 0;
+        }
+        .rate {
+        float: left;
+        height: 46px;
+        padding: 0 10px;
+        }
+        .rate:not(:checked) > input {
+            position:absolute;
+            top:-9999px;
+        }
+        .rate:not(:checked) > label {
+            float:right;
+            width:1em;
+            overflow:hidden;
+            white-space:nowrap;
+            cursor:pointer;
+            font-size:30px;
+            color:#ccc;
+        }
+        .rate:not(:checked) > label:before {
+            content: '★ ';
+        }
+        .rate > input:checked ~ label {
+            color: #ffc700;
+        }
+        .rate:not(:checked) > label:hover,
+        .rate:not(:checked) > label:hover ~ label {
+            color: #deb217;
+        }
+        .rate > input:checked + label:hover,
+        .rate > input:checked + label:hover ~ label,
+        .rate > input:checked ~ label:hover,
+        .rate > input:checked ~ label:hover ~ label,
+        .rate > label:hover ~ input:checked ~ label {
+            color: #c59b08;
+        }
+    </style>
 </head>
 
 <body>
