@@ -39,7 +39,7 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
-    type_user = 2
+    type_user = 3
     user = User.query.filter_by(email=email).first()
 
     if user:
@@ -61,9 +61,27 @@ def give_perm():
 
 @auth.route('/give_perm', methods=['POST'])
 def give_perm_post():
-    flash(request.form.get('username'))
-    flash(request.form.get('admin'))
-    return redirect(url_for('auth.login'))
+    
+    name = request.form.get('username')
+    flash(name)
+    print(request.form.get('jury'))
+    if request.form.get('jury') == 'on':
+        user = User.query.filter_by(name=name).first()
+        #print("before " + str(user.name) + " " + str(user.type_user))
+        print(user)
+        user.type_user = 2
+    elif request.form.get('organizer') == 'on':
+        user = User.query.filter_by(name=name).first()
+        print("before " + str(user.name) + " " + str(user.type_user))
+        user.type_user = 1
+    elif request.form.get('admin') == 'on':
+        user = User.query.filter_by(name=name).first()
+        print("before " + str(user.name) + " " + str(user.type_user))
+        user.type_user = 0
+
+    print(str(user.name) + " " + str(user.type_user))
+    db.session.commit()
+    return redirect(url_for('auth.give_perm'))
 
 
 @auth.route('/logout')

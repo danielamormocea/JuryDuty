@@ -2,9 +2,11 @@
 
 {% block content %}
 <h1 class="title">
-	  Flask Login
+	{% for contestant in contestants %}
+		<div> {{ contestant.id }} - {{ contestant.name }} - {{ contestant.description }} - {{ contestant.series_no }} </div>
+	{% endfor %}
 </h1>
 <h2 class="subtitle">
-	  BLABLA
+	
 </h2>
 {% endblock %}

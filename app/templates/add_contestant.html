@@ -4,25 +4,33 @@
 {% block content %}
 <div class="column is-4 is-offset-4">
     <h3 class="title">Add a participant</h3>
+    <form method="POST" action="/add_contestant">
+        <input type="submit" name="finish" class="button is-large btn btn-warning" value="Finish" method="POST">
+    </form>
+    <br>
     <div class="box">
         <form method="POST" action="/add_contestant">
             <div class="field">
 
                 <div class="control">
-                    <input class="input is-large" type="name" name="name_contestant" placeholder="Contestant name" autofocus="">
+                    <input class="input is-large" type="name" name="name_contestant" placeholder="Contestant name" autofocus="" required>
                 </div>
         
                 <div class="control">
-                    <input class="input is-large" type="number" name="age" placeholder="Age" autofocus="">
+                    <input class="input is-large" type="number" name="age" placeholder="Age" autofocus="" required>
                 </div>
                 
                 <div class="control">
-                    <input class="input is-large" type="text" name="description" placeholder="Short Description" autofocus="">
+                    <input class="input is-large" type="text" name="description" placeholder="Short Description" autofocus="" required>
                 </div>
 
             <button class="button is-block is-info is-large is-fullwidth">Apply</button>
-
+            <br>
+            
         </form>
+        
+
     </div>
+    
 </div>
 {% endblock %}

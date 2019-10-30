@@ -6,7 +6,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-    type_user = db.Column(db.Integer) # 0 - admin, 1 - organizator 2 - juriu
+    type_user = db.Column(db.Integer) # 0 - admin, 1 - organizator 2 - juriu 3 - anything
 
 
 class Contestant(db.Model):
@@ -17,6 +17,7 @@ class Contestant(db.Model):
     round_no = db.Column(db.Integer)
     series_no = db.Column(db.Integer)
     grade = db.Column(db.Integer)
+    
 
 
 
