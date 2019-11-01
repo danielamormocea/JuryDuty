@@ -1,12 +1,101 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1 class="title">
-	{% for contestant in contestants %}
-		<div> {{ contestant.id }} - {{ contestant.name }} - {{ contestant.description }} - {{ contestant.series_no }} </div>
-	{% endfor %}
+	<!-- <script type="text/javascript" src="vote.js"></script> -->
+
+	  Live competition
 </h1>
-<h2 class="subtitle">
+    <body>
+	{% if show_rating == 1 %}
+		<div id="white-background">
+		</div>
+		<div id="dlgbox">
+			<div id="dlg-header">Grade Contestant</div>
+			<form method="POST" action="/">
+				<input name="contestant_vote" value={{vote_contestant}} hidden>
+				<div class="rate">
+					
+					<input type="radio" id="star5" name="rate" value="5" />
+					<label for="star5" title="text">5 stars</label>
+					<input type="radio" id="star4" name="rate" value="4" />
+					<label for="star4" title="text">4 stars</label>
+					<input type="radio" id="star3" name="rate" value="3" />
+					<label for="star3" title="text">3 stars</label>
+					<input type="radio" id="star2" name="rate" value="2" />
+					<label for="star2" title="text">2 stars</label>
+					<input type="radio" id="star1" name="rate" value="1" />
+					<label for="star1" title="text">1 star</label>
+				</div>
+
+				<div class="rate">
+						<input type="radio" id="2star5" name="rate2" value="5" />
+						<label for="2star5" title="text">5 stars</label>
+						<input type="radio" id="2star4" name="rate2" value="4" />
+						<label for="2star4" title="text">4 stars</label>
+						<input type="radio" id="2star3" name="rate2" value="3" />
+						<label for="2star3" title="text">3 stars</label>
+						<input type="radio" id="2star2" name="rate2" value="2" />
+						<label for="2star2" title="text">2 stars</label>
+						<input type="radio" id="2star1" name="rate2" value="1" />
+						<label for="2star1" title="text">1 star</label>
+				</div>
+				
+
+			<div id="dlg-footer">
+				<button type="submit">OK</button>
+				<button name="cancel" value="cancel_vote">Cancel</button>
+			</div>
+		
+		</form>
+		</div>
+		
+	{% endif %}
 	
-</h2>
+
+
+
+<table class="table">
+	<thead class="black white-text" style="background-color: #053838 !important">
+	  <tr>
+		<th scope="col" style="color:white !important">#</th>
+		<th scope="col" style="color:white !important">Name</th>
+		<th scope="col" style="color:white !important">Age</th>
+		<th scope="col" style="color:white !important">Description</th>
+		<th scope="col" style="color:white !important">Round</th>
+		<th scope="col" style="color:white !important">Series</th>
+		<th scope="col" style="color:white !important">Grade</th>
+	  </tr>
+	</thead>
+	<tbody style="background-color:rgb(181, 202, 198) !important">
+		{% for contestant in contestants %}
+			<tr>
+				<th scope="row"> {{ contestant.id }} </th>
+				<td>
+					<a href="/vote/{{contestant.name}}" class="navbar-item">
+					 {{ contestant.name }} </a>
+				</td>
+
+				<td> {{ contestant.age }} </td>
+				<td> {{ contestant.description }} </td>
+				{% if contestant.round_no == -1 %}
+					<td> No longer in the game </td>
+				{% else %}
+					<td> {{ contestant.round_no }} </td>
+				{% endif %}
+
+				{% if contestant.series_no == 0 %}
+					<td> Junior </td>
+				{% else %}
+					<td> Senior </td>
+				{% endif %}
+				<td> {{ contestant.grade }} </td>
+			</tr>
+		{% endfor %}
+	</tbody>
+  </table>
+
+
+   
+    </body>
+
 {% endblock %}

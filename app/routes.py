@@ -1,10 +1,10 @@
 #from app import app
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, url_for, flash, send_from_directory
 from flask import Blueprint
 from flask_login import login_required, current_user
 from .models import User, Contestant
 from . import db
-import uuid
+import random
 
 routes = Blueprint('main', __name__)
 
@@ -13,17 +13,41 @@ contest_rounds = 1
 contest_series = 3
 categories = ["Plating", "Taste", "Smell", "Colour"]
 
-@routes.route('/')
+@routes.route('/css/<path:path>')
+def send_css(path):
+    return send_from_directory('./static/css/', path)
+
+@routes.route('/vote/<string:name>', methods=['GET'])
+def vote(name):
+    contestants = Contestant.query.all()
+    return render_template('index.html', contestants = contestants, show_rating=1, vote_contestant=name)
+
+
+@routes.route('/', methods=['GET'])
 def index():
     contestants = Contestant.query.all()
+    #if current_user:
+     #   user = User.query.filter_by(name=current_user.name).all()
     # contestans = {<Contestant 1>, <Contestant 12>, <Contestant 2> ....}
     # contestant[0] -> Contestant 1
     # contestant[0].age, contestant[0].name ... etc
     # ex: for contestant in contestants:
     #       print contestant.age
-    print(contestants)
     return render_template('index.html', contestants = contestants)
 
+@routes.route('/', methods=['POST'])
+def index_post():
+    contestants = Contestant.query.all()
+    if (request.form.get('cancel') == "cancel_vote"):
+        return render_template('index.html', contestants = contestants)
+
+    print(request.form.to_dict(flat=False)['rate'])
+    print('ceva')
+    print(request.form.get('contestant_vote'))
+
+    print(request.form.to_dict(flat=False)['rate2'])
+
+    return redirect(url_for('main.index'))
 
 @routes.route('/profile')
 def profile():
@@ -57,25 +81,38 @@ def add_contestant_post():
         contestant_name = request.form.get('name_contestant')
         age = request.form.get('age')
         description = request.form.get('description')
-        i = uuid.uuid1()
-        new_contestant = Contestant( id = i, name = contestant_name, age = age, description = description, round_no = 0, series_no = 0, grade = 0)
+        i = random.randint(1000, 9999)
+        new_contestant = Contestant( id = i, name = contestant_name, age = int(age), description = description, round_no = 0, series_no = 0, grade = 0)
 
         db.session.add(new_contestant)
         db.session.commit()
 
     if request.form.get('finish') == "Finish":
-        print(contest_series)
+        print("ALALLALALAL")
         contestants = Contestant.query.all()
-        for contestant in contestants:
-            contestant.round_no = 0
-            grade = 0
-        nr_contestants = len(contestants)
-        print(type(nr_contestants))
-        print(type(contest_series))
-        for i in range(0, nr_contestants):
-            contestants[i].series_no = (i+1) % contest_series + 1
+        if len(contestants) != 0:
+            for contestant in contestants:
+                contestant.round_no = contest_rounds
+                if (contestant.age is None):
+                    pass
+                if (int(contestant.age) < 25):
+                    contestant.series_no = 0
+                else:
+                    contestant.series_no = 1
+                contestant.grade = 0
+            
 
-        db.session.commit()
+            db.session.commit()
         return redirect(url_for('main.index'))
 
     return redirect(url_for('main.add_contestant_post'))
+
+
+
+
+
+
+
+
+
+
