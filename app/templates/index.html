@@ -10,11 +10,10 @@
 		<div id="white-background">
 		</div>
 		<div id="dlgbox">
-			<div id="dlg-header">Grade Contestant</div>
-			<form method="POST" action="/">
+			<div id="dlg-header">Grade {{vote_contestant}}</div>
+			<form method="POST" action="/" style="display: inline-grid; background: whitesmoke; width: 450px">
 				<input name="contestant_vote" value={{vote_contestant}} hidden>
 				<div class="rate">
-					{{ categories[0] }}
 					<input type="radio" id="star5" name="rate" value="5" />
 					<label for="star5" title="text">5 stars</label>
 					<input type="radio" id="star4" name="rate" value="4" />
@@ -25,10 +24,12 @@
 					<label for="star2" title="text">2 stars</label>
 					<input type="radio" id="star1" name="rate" value="1" />
 					<label for="star1" title="text">1 star</label>
+                    <span style="color: #6c757d;
+                    font-weight: bold;
+                    padding-right: 200px;
+                    vertical-align: -10px;">{{categories[0]}}</span>
 				</div>
-
 				<div class="rate">
-						{{ categories[1] }}
 						<input type="radio" id="2star5" name="rate2" value="5" />
 						<label for="2star5" title="text">5 stars</label>
 						<input type="radio" id="2star4" name="rate2" value="4" />
@@ -39,10 +40,14 @@
 						<label for="2star2" title="text">2 stars</label>
 						<input type="radio" id="2star1" name="rate2" value="1" />
 						<label for="2star1" title="text">1 star</label>
+                        <span style="color: #6c757d;
+                        font-weight: bold;
+                        padding-right: 200px;
+                        padding-top: 20px;
+                        vertical-align: -10px;">{{categories[1]}}</span>
 				</div>
-				
 
-			<div id="dlg-footer">
+			<div id="dlg-footer" style="margin: 0px;">
 				<button type="submit">OK</button>
 				<button name="cancel" value="cancel_vote">Cancel</button>
 			</div>
