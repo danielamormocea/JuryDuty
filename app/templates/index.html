@@ -14,7 +14,7 @@
 			<form method="POST" action="/">
 				<input name="contestant_vote" value={{vote_contestant}} hidden>
 				<div class="rate">
-					
+					{{ categories[0] }}
 					<input type="radio" id="star5" name="rate" value="5" />
 					<label for="star5" title="text">5 stars</label>
 					<input type="radio" id="star4" name="rate" value="4" />
@@ -28,6 +28,7 @@
 				</div>
 
 				<div class="rate">
+						{{ categories[1] }}
 						<input type="radio" id="2star5" name="rate2" value="5" />
 						<label for="2star5" title="text">5 stars</label>
 						<input type="radio" id="2star4" name="rate2" value="4" />
@@ -50,12 +51,10 @@
 		</div>
 		
 	{% endif %}
-	
-
 
 
 <table class="table">
-	<thead class="black white-text" style="background-color: #053838 !important">
+	<thead class="black white-text" style="background-color: #b8972b !important">
 	  <tr>
 		<th scope="col" style="color:white !important">#</th>
 		<th scope="col" style="color:white !important">Name</th>
@@ -66,7 +65,7 @@
 		<th scope="col" style="color:white !important">Grade</th>
 	  </tr>
 	</thead>
-	<tbody style="background-color:rgb(181, 202, 198) !important">
+	<tbody style="background-color:rgb(231, 211, 189) !important">
 		{% for contestant in contestants %}
 			<tr>
 				<th scope="row"> {{ contestant.id }} </th>

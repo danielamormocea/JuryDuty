@@ -30,12 +30,6 @@
 							<a href="{{ url_for('main.index') }}" class="navbar-item">
 									Home
 								</a>
-
-								{% if current_user.is_authenticated %}
-								<a href="{{ url_for('main.profile') }}" class="navbar-item">
-									Profile
-								</a>
-								{% endif %}
 								{% if not current_user.is_authenticated %}
 								<a href="{{ url_for('auth.login') }}" class="navbar-item">
 									Login
@@ -62,6 +56,11 @@
 								{% if current_user.type_user == 0 or current_user.type_user == 1 %}
 								<a href="{{ url_for('main.add_contestant') }}" class="navbar-item">
 										ADD CONTESTANT
+								</a>
+								{% endif %}
+								{% if current_user.type_user == 0 or current_user.type_user == 1 %}
+								<a href="{{ url_for('main.game_opt') }}" class="navbar-item">
+										Game Options
 								</a>
 								{% endif %}
 

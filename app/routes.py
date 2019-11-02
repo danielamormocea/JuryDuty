@@ -19,10 +19,17 @@ percents = [10, 25, 30, 50, 75]
 def send_css(path):
     return send_from_directory('./static/css/', path)
 
+
+# TODO: sa apara categoria la rating!!!
 @routes.route('/vote/<string:name>', methods=['GET'])
 def vote(name):
     contestants = Contestant.query.all()
-    return render_template('index.html', contestants = contestants, show_rating=1, vote_contestant=name)
+    cats = []
+    if len(categories) != 0:
+        for category in categories:
+            if category['value'] == True:
+                cats.append(category['name'])
+    return render_template('index.html', contestants = contestants, show_rating=1, vote_contestant=name, categories=cats)
 
 
 @routes.route('/', methods=['GET'])
@@ -42,14 +49,13 @@ def index_post():
     contestants = Contestant.query.all()
     if (request.form.get('cancel') == "cancel_vote"):
         return render_template('index.html', contestants = contestants)
-
     print(request.form.to_dict(flat=False)['rate'])
-    print('ceva')
     print(request.form.get('contestant_vote'))
-
     print(request.form.to_dict(flat=False)['rate2'])
 
+    # TODO: adaugat media notelor la contestant;
     return redirect(url_for('main.index'))
+
 
 @routes.route('/profile')
 def profile():
@@ -151,6 +157,13 @@ def add_contestant_post():
         return redirect(url_for('main.index'))
 
     return redirect(url_for('main.add_contestant_post'))
+
+
+@routes.route('/game_opt', methods=['GET'])
+def game_opt():
+    contestants = Contestant.query.all()
+
+    return render_template('game_opt.html', contestants=contestants)
 
 
 
