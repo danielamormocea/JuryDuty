@@ -11,7 +11,7 @@ routes = Blueprint('main', __name__)
 contest_name = ""
 contest_rounds = 1
 contest_series = 3
-categories = []
+categories =[]
 i = 100
 percents = [10, 25, 30, 50, 75]
 
@@ -42,18 +42,36 @@ def index():
     # contestant[0].age, contestant[0].name ... etc
     # ex: for contestant in contestants:
     #       print contestant.age
-    return render_template('index.html', contestants = contestants)
+
+    cats = []
+    if len(categories) != 0:
+        for category in categories:
+            if category['value'] == True:
+                cats.append(category['name'])
+    return render_template('index.html', contestants = contestants, categories=cats)
 
 @routes.route('/', methods=['POST'])
 def index_post():
-    contestants = Contestant.query.all()
-    if (request.form.get('cancel') == "cancel_vote"):
-        return render_template('index.html', contestants = contestants)
-    print(request.form.to_dict(flat=False)['rate'])
-    print(request.form.get('contestant_vote'))
-    print(request.form.to_dict(flat=False)['rate2'])
 
+    contestants = Contestant.query.all()
+    cats = []
+    if len(categories) != 0:
+        for category in categories:
+            if category['value'] == True:
+                cats.append(category['name'])
+    if (request.form.get('cancel') == "cancel_vote"):
+        return render_template('index.html', contestants = contestants, categories=cats)
+
+    grade1 = 0
+    grade2 = 0
+    if ('rate' in request.form.to_dict(flat=False)):
+        grade1 = int(request.form.to_dict(flat=False)['rate'][0])/2
+    if ('rate2' in request.form.to_dict(flat=False)):
+        grade2 = int(request.form.to_dict(flat=False)['rate2'][0])/2
     # TODO: adaugat media notelor la contestant;
+    update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote')).first()
+    update_contestant.grade = grade1 + grade2
+    db.session.commit()
     return redirect(url_for('main.index'))
 
 
@@ -85,7 +103,7 @@ def organize():
         'value': True,
         'percent': 0
     }
-    categories = [ cat1, cat2, cat3, cat4]
+    categories = [cat1, cat2, cat3, cat4]
 
     return render_template('organize.html', categories = categories, percents = percents)
 
