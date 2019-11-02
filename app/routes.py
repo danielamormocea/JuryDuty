@@ -71,8 +71,9 @@ def index_post():
         grade1 = int(request.form.to_dict(flat=False)['rate'][0])/2
     if ('rate2' in request.form.to_dict(flat=False)):
         grade2 = int(request.form.to_dict(flat=False)['rate2'][0])/2
-    # TODO: adaugat media notelor la contestant;
-    update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote')).first()
+
+    print(request.form.get('contestant_vote'))
+    update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote'))
     update_contestant.grade = grade1 + grade2
     db.session.commit()
     return redirect(url_for('main.index'))
