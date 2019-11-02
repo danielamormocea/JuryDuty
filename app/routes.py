@@ -9,7 +9,7 @@ import random
 routes = Blueprint('main', __name__)
 
 contest_name = ""
-contest_rounds = 10
+contest_rounds = 4
 #contest_series = 3
 categories = []
 
@@ -73,9 +73,11 @@ def index_post():
         grade2 = int(request.form.to_dict(flat=False)['rate2'][0])/2
 
     print(request.form.get('contestant_vote'))
-    update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote'))
+    update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote')).first()
     update_contestant.grade = grade1 + grade2
     db.session.commit()
+
+
     return redirect(url_for('main.index'))
 
 
@@ -200,7 +202,12 @@ def game_opt_post():
         current_round[current_series] += 1
         return redirect(url_for('main.index'))
     elif game == 'finish_game':
-        return render_template('winners.html')
+        contestants = Contestant.query.all()
+        for cts in contestants:
+            if cts.grade < 2.5:
+                cts.round_no = -1
+                db.session.commit()
+        return render_template('winners.html', contestants=contestants)
 
 @routes.route('/winners', methods=['GET'])
 def winners():

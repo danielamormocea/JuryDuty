@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <br>
+            {% for contestant in contestants %}
+                {% if contestant.series_no == 0 %}
+                    {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Junior <button class="button is-small btn btn-danger" ></button>
+                    <br>
+                {% else %}
+                    {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Senior <button class="button is-small btn btn-danger" ></button>
+                    <br>
+                {% endif %}
+            {% endfor %}
+            
+                
+        </div>
+
+        <div class="col" >
+                <form method="POST" action="/game_opt">
+                    Current round: Junior {{ current_round['junior'] }} / Senior {{ current_round['senior'] }}
+                    <br>
+                    <select name="select_series" class="btn btn-outline-dark" >
+                        <option value="junior">Junior</option>
+                        <option value="senior">Senior</option>
+                    </select>
+
+                    <button type="submit" name="game" class="btn btn-outline-dark" value="start_game"> Start Next Round </button> 
+                    <br>
+                    <br>
+                    <br>
+                    <button type="submit" name="game" class="btn btn-outline-dark" value="finish_game"> Finish </button> 
+                </form>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

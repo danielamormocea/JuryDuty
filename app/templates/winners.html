@@ -1,0 +1,54 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+        <div class="row">
+            <div class="col">
+                <table class="table">
+                    <thead class="black white-text" style="background-color: #d3ac2e !important">
+                    <tr>
+                        <th scope="col" style="color:white !important">#</th>
+                        <th scope="col" style="color:white !important">Name</th>
+                        <th scope="col" style="color:white !important">Grade</th>
+                    </tr>
+                    </thead>
+                    <tbody style="background-color:rgb(231, 211, 189) !important">
+                        {% for contestant in contestants %}
+                            {% if contestant.round_no != -1 and contestant.series_no == 0 %}
+                                <tr>
+                                    <th scope="row"> {{ contestant.id }} </th>
+                                    <td> {{ contestant.name }} </td>
+                                    <td> {{ contestant.grade }} </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <table class="table">
+                    <thead class="black white-text" style="background-color: #d3ac2e !important">
+                    <tr>
+                        <th scope="col" style="color:white !important">#</th>
+                        <th scope="col" style="color:white !important">Name</th>
+                        <th scope="col" style="color:white !important">Grade</th>
+                    </tr>
+                    </thead>
+                    <tbody style="background-color:rgb(231, 211, 189) !important">
+                        {% for contestant in contestants %}
+                            {% if contestant.round_no != -1 and contestant.series_no == 1%}
+                                <tr>
+                                    <th scope="row"> {{ contestant.id }} </th>
+                                    <td> {{ contestant.name }} </td>
+                                    <td> {{ contestant.grade }} </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+
+{% endblock %}
