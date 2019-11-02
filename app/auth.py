@@ -64,11 +64,11 @@ def give_perm_post():
     
     name = request.form.get('username')
     flash(name)
+    global jury_no
     print(request.form.get('jury'))
     if request.form.get('jury') == 'on':
         user = User.query.filter_by(name=name).first()
         #print("before " + str(user.name) + " " + str(user.type_user))
-        print(user)
         user.type_user = 2
     elif request.form.get('organizer') == 'on':
         user = User.query.filter_by(name=name).first()

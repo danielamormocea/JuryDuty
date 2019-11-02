@@ -18,8 +18,21 @@ class Contestant(db.Model):
     series_no = db.Column(db.Integer)
     grade = db.Column(db.Integer)
 
+class JuryVoted(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    jury_name = db.Column(db.String(1000))
+    contestant_name = db.Column(db.String(1000))
 
-    
+class Contest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(1000))
+    rounds = db.Column(db.Integer)
+    category1 = db.Column(db.String(1000))
+    category2 = db.Column(db.String(1000))
+    current_rounds_junior = db.Column(db.Integer)
+    current_rounds_senior = db.Column(db.Integer)
+    procent1 = db.Column(db.Integer)
+    procent2 = db.Column(db.Integer)
 
 
 
