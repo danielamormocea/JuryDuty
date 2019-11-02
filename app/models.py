@@ -17,6 +17,8 @@ class Contestant(db.Model):
     round_no = db.Column(db.Integer)
     series_no = db.Column(db.Integer)
     grade = db.Column(db.Integer)
+
+
     
 
 

@@ -9,10 +9,13 @@ import random
 routes = Blueprint('main', __name__)
 
 contest_name = ""
-contest_rounds = 1
-contest_series = 3
+contest_rounds = 10
+#contest_series = 3
 categories = []
-i = 100
+
+current_round = {'junior':0, 'senior':0}
+current_series = ""
+
 percents = [10, 25, 30, 50, 75]
 
 @routes.route('/css/<path:path>')
@@ -96,6 +99,7 @@ def organize_post():
     contest_name = request.form.get('contest_name')
     global contest_rounds 
     contest_rounds = int(request.form.get('round_no'))
+    current_round = 1
     global contest_series
     contest_series = int(request.form.get('series_no'))
     print(contest_series)
@@ -139,7 +143,6 @@ def add_contestant_post():
         db.session.commit()
 
     if request.form.get('finish') == "Finish":
-        print("ALALLALALAL")
         contestants = Contestant.query.all()
         if len(contestants) != 0:
             for contestant in contestants:
@@ -162,15 +165,25 @@ def add_contestant_post():
 @routes.route('/game_opt', methods=['GET'])
 def game_opt():
     contestants = Contestant.query.all()
+    if current_round['junior'] == contest_rounds and current_round['senior'] == contest_rounds:
+        flash("GAME HAS ENDED")
+    else:
+        return render_template('game_opt.html', contestants=contestants, current_round = current_round)
 
-    return render_template('game_opt.html', contestants=contestants)
+@routes.route('/game_opt', methods=['POST'])
+def game_opt_post():
+    global current_round
+    global current_series
+    game = request.form.get('game')
+    print(game)
+    if game == 'start_game':
+        current_series = request.form.get('select_series')
+        current_round[current_series] += 1
+        return redirect(url_for('main.index'))
+    elif game == 'finish_game':
+        return render_template('winners.html')
 
-
-
-
-
-
-
-
-
-
+@routes.route('/winners', methods=['GET'])
+def winners():
+    return render_template('winnders.html')
+    
