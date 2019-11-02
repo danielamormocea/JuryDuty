@@ -6,16 +6,19 @@
     <div class="row">
         <div class="col">
             <br>
-            {% for contestant in contestants %}
-                {% if contestant.series_no == 0 %}
-                    {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Junior <button class="button is-small btn btn-danger" ></button>
-                    <br>
-                {% else %}
-                    {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Senior <button class="button is-small btn btn-danger" ></button>
-                    <br>
-                {% endif %}
-            {% endfor %}
-            
+            <form method="POST" action="/game_opt">
+                {% for contestant in contestants %}
+                    {% if contestant.series_no == 0 %}
+                        {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Junior <button type="submit" name="disq" value="{{contestant.name}}" class="btn-sm btn btn-danger"> Disqualify </button>
+                        <br>
+                        <br>
+                    {% else %}
+                        {{ contestant.name }} -- Round: {{ contestant.round_no }} -- Series: Senior <button type="submit" name="disq" value="{{contestant.name}}" class="btn-sm btn btn-danger"> Disqualify </button>
+                        <br>
+                        <br>
+                    {% endif %}
+                {% endfor %}
+            </form>
                 
         </div>
 

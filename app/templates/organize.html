@@ -20,17 +20,14 @@
                 <div class="control">
                     <input class="input is-large" type="name" name="contest_name" placeholder="Contest Name" autofocus="" required>
                 </div>
-
+                <br>
                 <div class="control">
                     <input class="input is-large" type="number" name="round_no" placeholder="Number of rounds" autofocus="" required>
                 </div>
-
-                <div class="control">
-                    <input class="input is-large" type="number" name="series_no" placeholder="Number of series per round" autofocus="" required>
-                </div>
+                <br>
                 {%  for category in categories %}
                     <div class="control">
-                        <input type="checkbox"  name="{{ category["name"] }}" value="{{ category["value"] }}" checked>
+                        <input type="checkbox"  name="{{ category["name"] }}" value="{{ category["value"] }}">
                     {{ category["name"] }}
                     <select name= "{{ category["name"] }}pr" method="GET" action="/">
                         <option name = "{{ category["name"] }} pr"  value="{{percents[0]}}" selected>{{percents[0]}}</option>
@@ -39,6 +36,7 @@
                                   {% endfor %}
                     </select>
                     </div>
+                    <br>
                 {% endfor %}
             </div>
 

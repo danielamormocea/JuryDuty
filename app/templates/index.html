@@ -2,8 +2,7 @@
 {% block content %}
 <h1 class="title">
 	<!-- <script type="text/javascript" src="vote.js"></script> -->
-
-	  Live competition
+	{{ contestName }}
 </h1>
     <body>
 	{% if show_rating == 1 %}
@@ -59,7 +58,7 @@
 
 
 <table class="table">
-	<thead class="black white-text" style="background-color: #d3ac2e !important">
+	<thead class="black white-text" style="background-color: #d3ac2e  !important">
 	  <tr>
 		<th scope="col" style="color:white !important">#</th>
 		<th scope="col" style="color:white !important">Name</th>
@@ -70,7 +69,7 @@
 		<th scope="col" style="color:white !important">Grade</th>
 	  </tr>
 	</thead>
-	<tbody style="background-color:rgb(231, 211, 189) !important">
+	<tbody style="background-color:rgb(231, 211, 189)  !important">
 		{% for contestant in contestants %}
 			<tr>
 				<th scope="row"> {{ contestant.id }} </th>

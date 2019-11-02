@@ -51,7 +51,7 @@ def index():
         for category in categories:
             if category['value'] == True:
                 cats.append(category['name'])
-    return render_template('index.html', contestants = contestants, categories=cats)
+    return render_template('index.html', contestants = contestants, categories=cats, contestName=contest_name)
 
 @routes.route('/', methods=['POST'])
 def index_post():
@@ -63,7 +63,7 @@ def index_post():
             if category['value'] == True:
                 cats.append(category['name'])
     if (request.form.get('cancel') == "cancel_vote"):
-        return render_template('index.html', contestants = contestants, categories=cats)
+        return render_template('index.html', contestants = contestants, categories=cats, contestName=contest_name)
 
     grade1 = 0
     grade2 = 0
@@ -121,9 +121,11 @@ def organize_post():
     global contest_rounds 
     contest_rounds = int(request.form.get('round_no'))
     current_round = 1
-    global contest_series
-    contest_series = int(request.form.get('series_no'))
-    print(contest_series)
+
+    contestants = Contestant.query.all()
+    if (len(contestants)):
+        for cts in contestants:
+            db.session.delete(cts)
 
     global categories
     global percents
@@ -188,6 +190,7 @@ def game_opt():
     contestants = Contestant.query.all()
     if current_round['junior'] == contest_rounds and current_round['senior'] == contest_rounds:
         flash("GAME HAS ENDED")
+        return render_template('game_opt.html', contestants=contestants, current_round = current_round)
     else:
         return render_template('game_opt.html', contestants=contestants, current_round = current_round)
 
@@ -197,6 +200,12 @@ def game_opt_post():
     global current_series
     game = request.form.get('game')
     print(game)
+    if request.form.get('disq') != None:
+        disq_contestant = request.form.get('disq')
+        Contestant.query.filter_by(name=disq_contestant).delete()
+        db.session.commit()
+        contestants = Contestant.query.all()
+        return render_template('game_opt.html', contestants=contestants, current_round = current_round)
     if game == 'start_game':
         current_series = request.form.get('select_series')
         current_round[current_series] += 1
