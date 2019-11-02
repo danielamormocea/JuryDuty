@@ -11,7 +11,9 @@ routes = Blueprint('main', __name__)
 contest_name = ""
 contest_rounds = 1
 contest_series = 3
-categories = ["Plating", "Taste", "Smell", "Colour"]
+categories = []
+i = 100
+percents = [10, 25, 30, 50, 75]
 
 @routes.route('/css/<path:path>')
 def send_css(path):
@@ -56,7 +58,31 @@ def profile():
 
 @routes.route ('/organize', methods=['GET'])
 def organize():
-    return render_template('organize.html', categories = categories)
+    global categories
+    cat1 = {
+        'name' : 'plating',
+        'value' : True,
+        'percent' : 0
+    }
+    cat2 = {
+        'name': 'smell',
+        'value': True,
+        'percent' : 0
+    }
+    cat3 = {
+        'name': 'taste',
+        'value': True,
+        'percent': 0
+    }
+    cat4 = {
+        'name': 'colour',
+        'value': True,
+        'percent': 0
+    }
+    categories = [ cat1, cat2, cat3, cat4]
+
+    return render_template('organize.html', categories = categories, percents = percents)
+
 
 @routes.route ('/organize', methods=['POST'])
 def organize_post():
@@ -67,7 +93,26 @@ def organize_post():
     global contest_series
     contest_series = int(request.form.get('series_no'))
     print(contest_series)
-    return redirect(url_for('main.add_contestant'))
+
+    global categories
+    global percents
+    calcPercent = 0
+    for x in categories:
+        if request.form.get(x['name']) == None:
+            x['value'] = False
+        str = x['name'] + 'pr'
+
+        if x['value'] != False:
+            x['percent'] = int(request.form.get(str))
+            calcPercent += x['percent']
+
+    print(categories)
+    if calcPercent > 100:
+        flash('More than 100%')
+        return render_template('organize.html', categories=categories, percents=percents)
+    else:
+        return redirect(url_for('main.add_contestant'))
+
 
 @routes.route('/add_contestant' , methods=['GET'])
 def add_contestant():

@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <script>
+              var messages = {{ messages | safe }};
+              for (var i=0; i<messages.length; i++) {
+                    alert(messages[i]);
+              }
+        </script>
+    {% endif %}
+{% endwith %}
 <div class="column is-4 is-offset-4">
     <h3 class="title">Let's Organize!</h3>
     <div class="box">
@@ -18,7 +28,18 @@
                 <div class="control">
                     <input class="input is-large" type="number" name="series_no" placeholder="Number of series per round" autofocus="" required>
                 </div>
-                
+                {%  for category in categories %}
+                    <div class="control">
+                        <input type="checkbox"  name="{{ category["name"] }}" value="{{ category["value"] }}" checked>
+                    {{ category["name"] }}
+                    <select name= "{{ category["name"] }}pr" method="GET" action="/">
+                        <option name = "{{ category["name"] }} pr"  value="{{percents[0]}}" selected>{{percents[0]}}</option>
+                              {% for percent in percents %}
+                                <option value="{{percent}}">{{percent}}%</option>
+                                  {% endfor %}
+                    </select>
+                    </div>
+                {% endfor %}
             </div>
 
             <button class="button is-block is-info is-large is-fullwidth">Create Contest</button>
