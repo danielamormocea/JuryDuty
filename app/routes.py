@@ -8,7 +8,6 @@ import random
 
 routes = Blueprint('main', __name__)
 
-contest_name = ""
 contest_rounds = 4
 #contest_series = 3
 categories = []
@@ -31,13 +30,13 @@ def vote(name):
     contestants = Contestant.query.all()
     cats = []
     show_rating = 0
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
     if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
-            and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name).scalar() is None:
+            and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
         show_rating = 1
-    return render_template('index.html', contestants = contestants, show_rating=show_rating, vote_contestant=name, categories=cats)
+    return render_template('index.html', contestants = contestants, show_rating=show_rating, vote_contestant=name, categories=cats, contestName=contest.name)
 
 
 @routes.route('/', methods=['GET'])
@@ -54,10 +53,11 @@ def index():
     #       print contestant.age
 
     cats = []
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
-    return render_template('index.html', contestants = contestants, categories=cats, contestName=contest_name)
+    print(contest.name)
+    return render_template('index.html', contestants = contestants, categories=cats, contestName=contest.name)
 
 @routes.route('/', methods=['POST'])
 def index_post():
@@ -65,19 +65,19 @@ def index_post():
     contestants = Contestant.query.all()
     cats = []
 
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
     if (request.form.get('cancel') == "cancel_vote"):
-        return render_template('index.html', contestants = contestants, categories=cats, contestName=contest_name)
+        return render_template('index.html', contestants = contestants, categories=cats, contestName=contest.name)
 
     grade1 = 0
     grade2 = 0
 
     if ('rate' in request.form.to_dict(flat=False)):
-        grade1 = contest.procent1[0] * int(request.form.to_dict(flat=False)['rate'][0])/(2*jury_no)
+        grade1 = (contest.procent1 / 100) * int(request.form.to_dict(flat=False)['rate'][0])/(jury_no)
     if ('rate2' in request.form.to_dict(flat=False)):
-        grade2 = contest.procent2[1] * int(request.form.to_dict(flat=False)['rate2'][0])/(2*jury_no)
+        grade2 = (contest.procent2 / 100) * int(request.form.to_dict(flat=False)['rate2'][0])/(jury_no)
 
     update_contestant = Contestant.query.filter_by(name=request.form.get('contestant_vote')).first()
     update_contestant.grade += grade1 + grade2
@@ -161,6 +161,8 @@ def organize_post():
         new_contest = Contest(id=random.randint(1, 100000), name=contest_name, rounds=contest_rounds,
                               category1=categories_names[0], category2=categories_names[1], current_rounds_junior=0,
                               current_rounds_senior=0, procent1=percents[0], procent2=percents[1])
+        JuryVoted.query.all().delete()
+        print(new_contest)
         db.session.add(new_contest)
         db.session.commit()
         return redirect(url_for('main.add_contestant'))
@@ -174,7 +176,7 @@ def add_contestant():
 @routes.route('/add_contestant' , methods=[ 'POST'])
 def add_contestant_post():
     global i
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
 
     if request.form.get('name_contestant') != None:
         contestant_name = request.form.get('name_contestant')
@@ -207,7 +209,7 @@ def add_contestant_post():
 @routes.route('/game_opt', methods=['GET'])
 def game_opt():
     contestants = Contestant.query.all()
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
     if contest.current_rounds_junior == contest.rounds and contest.current_rounds_senior == contest.rounds:
         flash("GAME HAS ENDED")
         db.session.delete(contest)
@@ -221,28 +223,41 @@ def game_opt_post():
     global current_series
     game = request.form.get('game')
     print(game)
-    contest = Contest.query.all().first()
+    contest = Contest.query.all()[0]
+    contestants = Contestant.query.all()
+    jury = User.query.filter_by(type_user=2)
 
     if request.form.get('disq') != None:
         disq_contestant = request.form.get('disq')
         Contestant.query.filter_by(name=disq_contestant).delete()
         db.session.commit()
-        contestants = Contestant.query.all()
         return render_template('game_opt.html', contestants=contestants, current_round = [contest.current_rounds_junior, contest.current_rounds_senior])
     if game == 'start_game':
         current_series = request.form.get('select_series')
-        if current_series is 'senior':
+        if current_series == 'senior':
             contest.current_rounds_senior += 1
-        else:
+            #trecem prin toti seniorii si facem +1
+            for contestant in contestants:
+                if contestant.age >= 25 and contestant.round_no != -1:
+                    contestant.round_no = contest.current_rounds_senior
+                    JuryVoted.query.filter_by(contestant_name=contestant.name).delete()
+        elif current_series == 'junior':
             contest.current_rounds_junior += 1
-
+            for contestant in contestants:
+                if contestant.age < 25  and contestant.round_no != -1:
+                    contestant.round_no = contest.current_rounds_junior
+                    JuryVoted.query.filter_by(contestant_name=contestant.name).delete()
+        db.session.commit()
         return redirect(url_for('main.index'))
     elif game == 'finish_game':
         contestants = Contestant.query.all()
         for cts in contestants:
             if cts.round_no != -1 and cts.grade < 2.5 + cts.round_no*(1.8/contest.rounds):
                 cts.round_no = -1
-                db.session.commit()
+            for judge in jury:
+                new_jury_voted = JuryVoted(id=random.randint(1, 1000000) ,jury_name=judge.name, contestant_name=cts.name)
+                db.session.add(new_jury_voted)
+            db.session.commit()
         return render_template('winners.html', contestants=contestants)
 
 @routes.route('/winners', methods=['GET'])
