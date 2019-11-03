@@ -33,9 +33,10 @@ def vote(name):
     contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
-    if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
-            and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
-        show_rating = 1
+    if current_user.is_authenticated == True:
+        if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
+                and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
+            show_rating = 1
     return render_template('index.html', contestants = contestants, show_rating=show_rating, vote_contestant=name, categories=cats, contestName=contest.name)
 
 
@@ -180,7 +181,7 @@ def organize_post():
             new_contest = Contest(id=random.randint(1, 100000), name=contest_name, rounds=contest_rounds,
                                   category1=categories_names[0], category2=categories_names[1], current_rounds_junior=0,
                                   current_rounds_senior=0, procent1=percentsToInsert[0], procent2=percentsToInsert[1])
-            JuryVoted.query.all().delete()
+            #JuryVoted.query.all().delete()
             print(new_contest)
             db.session.add(new_contest)
             db.session.commit()
