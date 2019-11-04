@@ -11,33 +11,36 @@
         </script>
     {% endif %}
 {% endwith %}
+
 <div class="column is-4 is-offset-4">
     <h3 class="title">Let's Organize!</h3>
     <div class="box">
-        <form method="POST" action="/organize">
+        <form id = "form" method="POST" action="/organize">
             <div class="field">
 
                 <div class="control">
-                    <input class="input is-large" type="name" name="contest_name" placeholder="Contest Name" autofocus="" required>
+                    <input class="input is-large" type="name" name="contest_name" placeholder="Contest Name" autofocus="" value = "{{ contest_name }}" required>
                 </div>
                 <br>
                 <div class="control">
-                    <input class="input is-large" type="number" name="round_no" placeholder="Number of rounds" autofocus="" required>
+                    <input class="input is-large" type="number" name="round_no" placeholder="Number of rounds" autofocus="" value = "{{ contest_rounds }}"required>
                 </div>
                 <br>
+
                 {%  for category in categories %}
-                    <div class="control">
-                        <input type="checkbox"  name="{{ category["name"] }}" value="{{ category["value"] }}">
-                    {{ category["name"] }}
-                    <select name= "{{ category["name"] }}pr" method="GET" action="/">
-                        <option name = "{{ category["name"] }} pr"  value="{{percents[0]}}" selected>{{percents[0]}}</option>
-                              {% for percent in percents %}
-                                <option value="{{percent}}">{{percent}}%</option>
-                                  {% endfor %}
-                    </select>
-                    </div>
-                    <br>
+                        <div id = "Sma" class="control">
+                            <input type="checkbox"  name="{{ category["name"] }}" value="{{ category["value"] }}" >
+                        {{ category["name"] }}
+                        <select name= "{{ category["name"] }}pr" method="GET" action="/checkChange">
+                            <option name = "{{ category["name"] }} pr"   value = "{{ category["percent"] }} " onchange="validation()" SELECTED>{{ category["percent"] }}%</option>
+                                  {% for percent in percents %}
+                                    <option value="{{percent}}">{{percent}}%</option>
+                                      {% endfor %}
+                        </select>
+                        </div>
+                        <br>
                 {% endfor %}
+
             </div>
 
             <button class="button is-block is-info is-large is-fullwidth">Create Contest</button>

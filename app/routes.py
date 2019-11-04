@@ -33,9 +33,10 @@ def vote(name):
     contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
-    if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
-            and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
-        show_rating = 1
+    if current_user.is_authenticated == True:
+        if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
+                and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
+            show_rating = 1
     return render_template('index.html', contestants = contestants, show_rating=show_rating, vote_contestant=name, categories=cats, contestName=contest.name)
 
 
@@ -93,10 +94,13 @@ def index_post():
 def profile():
     return render_template('profile.html', name=current_user.name)
 
-
+data_organize={}
 @routes.route ('/organize', methods=['GET'])
 def organize():
     global categories
+    global data_organize
+    global contest_name
+    global contest_rounds
     cat1 = {
         'name' : 'plating',
         'value' : True,
@@ -118,8 +122,8 @@ def organize():
         'percent': 0
     }
     categories = [cat1, cat2, cat3, cat4]
-
-    return render_template('organize.html', categories = categories, percents = percents)
+    global percents
+    return render_template('organize.html', categories = categories, percents= percents, contest_name = "", contest_rounds = "")
 
 
 @routes.route ('/organize', methods=['POST'])
@@ -137,35 +141,51 @@ def organize_post():
         db.session.commit()
     global categories
     global percents
+    global data_organize
     calcPercent = 0
+    validateNrCategories = 0
     categories_names = []
-    percents = []
+    percentsToInsert = []
     for x in categories:
         if request.form.get(x['name']) == None:
             x['value'] = False
         strr = x['name'] + 'pr'
 
         if x['value'] != False:
+            validateNrCategories += 1
             x['percent'] = int(request.form.get(strr))
             calcPercent += x['percent']
             categories_names.append(x['name'])
-            percents.append(int(request.form.get(strr)))
+            percentsToInsert.append(int(request.form.get(strr)))
 
-    #print(categories)
-
-    if calcPercent > 100:
-        flash('More than 100%')
-        return render_template('organize.html', categories=categories, percents=percents)
+    print(categories)
+    print('calcPercent' + str(calcPercent))
+    print('validateNrCategories' + str(validateNrCategories))
+    if validateNrCategories > 2:
+        flash('Wrong number of categories')
+        for x in categories:
+            x['percent'] = 0
+            x['value'] = True
+        return render_template('organize.html', categories=categories, percents=percents, contest_name=contest_name,
+                               contest_rounds=contest_rounds)
     else:
-        print(str(contest_name) + str(contest_rounds) + str(categories_names) + str(percents))
-        new_contest = Contest(id=random.randint(1, 100000), name=contest_name, rounds=contest_rounds,
-                              category1=categories_names[0], category2=categories_names[1], current_rounds_junior=0,
-                              current_rounds_senior=0, procent1=percents[0], procent2=percents[1])
-        JuryVoted.query.all().delete()
-        print(new_contest)
-        db.session.add(new_contest)
-        db.session.commit()
-        return redirect(url_for('main.add_contestant'))
+        if calcPercent > 100:
+            flash('More than 100%')
+            for x in categories:
+                x['percent'] = 0
+                x['value'] = True
+            return render_template('organize.html', categories=categories, percents=percents, contest_name=contest_name,
+                                   contest_rounds=contest_rounds)
+        else:
+            print(str(contest_name) + str(contest_rounds) + str(categories_names) + str(percentsToInsert))
+            new_contest = Contest(id=random.randint(1, 100000), name=contest_name, rounds=contest_rounds,
+                                  category1=categories_names[0], category2=categories_names[1], current_rounds_junior=0,
+                                  current_rounds_senior=0, procent1=percentsToInsert[0], procent2=percentsToInsert[1])
+            #JuryVoted.query.all().delete()
+            print(new_contest)
+            db.session.add(new_contest)
+            db.session.commit()
+            return redirect(url_for('main.add_contestant'))
 
 
 @routes.route('/add_contestant' , methods=['GET'])
@@ -262,5 +282,5 @@ def game_opt_post():
 
 @routes.route('/winners', methods=['GET'])
 def winners():
-    return render_template('winnders.html')
+    return render_template('winners.html')
     
