@@ -15,7 +15,7 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
 	<!-- Material Design Bootstrap -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet">
-	
+
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 
@@ -56,16 +56,23 @@
 										Organize
 									</a>
 								{% endif %}
-								{% if current_user.type_user == 0 or current_user.type_user == 1 %}
+								<!-- {% if current_user.type_user == 0 or current_user.type_user == 1 %}
 								<a href="{{ url_for('main.add_contestant') }}" class="navbar-item">
 										Add contestant
 								</a>
-								{% endif %}
+								{% endif %} -->
 								{% if current_user.type_user == 0 or current_user.type_user == 1 %}
 								<a href="{{ url_for('main.game_opt') }}" class="navbar-item">
 										Game Options
 								</a>
 								{% endif %}
+
+								{% if current_user.type_user == 0 %}
+								<a href="{{ url_for('main.jury_opt') }}" class="navbar-item">
+										Jury
+								</a>
+								{% endif %}
+
 
                         </div>
                     </div>

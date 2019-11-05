@@ -7,8 +7,7 @@ from . import db
 import random
 
 routes = Blueprint('main', __name__)
-
-contest_rounds = 4
+contest_rounds = 1
 #contest_series = 3
 categories = []
 
@@ -30,13 +29,19 @@ def vote(name):
     contestants = Contestant.query.all()
     cats = []
     show_rating = 0
+    if Contest.query.all() == []:
+        flash("No active contest")
+        return redirect(url_for('main.index'))
     contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
     if current_user.is_authenticated == True:
-        if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
-                and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name) is None:
-            show_rating = 1
+        
+        cts = Contestant.query.filter_by(name=name).first()
+        if (cts.age < 25 and contest.active_round == 0) or (cts.age >= 25 and contest.active_round == 1):
+            if current_user.type_user == 2 and (Contestant.query.filter_by(name=name).first()).round_no != -1\
+                    and JuryVoted.query.filter_by(jury_name=current_user.name, contestant_name=name).all() == []:
+                show_rating = 1
     return render_template('index.html', contestants = contestants, show_rating=show_rating, vote_contestant=name, categories=cats, contestName=contest.name)
 
 
@@ -54,6 +59,9 @@ def index():
     #       print contestant.age
 
     cats = []
+    if Contest.query.all() == []:
+        #flash("No active contest")
+        return render_template('profile.html')
     contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
@@ -65,12 +73,15 @@ def index_post():
 
     contestants = Contestant.query.all()
     cats = []
-
+    if Contest.query.all() == []:
+        #flash("No active contest")
+        return render_template('profile.html')
     contest = Contest.query.all()[0]
     cats.append(contest.category1)
     cats.append(contest.category2)
     if (request.form.get('cancel') == "cancel_vote"):
-        return render_template('index.html', contestants = contestants, categories=cats, contestName=contest.name)
+        return render_template('index.html', contestants = contestants, categories=cats, contestName=contest.name, contestRound=contest.round,
+                            contestActive=contest.active_round)
 
     grade1 = 0
     grade2 = 0
@@ -133,12 +144,7 @@ def organize_post():
     global contest_rounds 
     contest_rounds = int(request.form.get('round_no'))
     current_round = 1
-
-    contestants = Contestant.query.all()
-    if (len(contestants) != 0):
-        for cts in contestants:
-            db.session.delete(cts)
-        db.session.commit()
+    
     global categories
     global percents
     global data_organize
@@ -161,7 +167,7 @@ def organize_post():
     print(categories)
     print('calcPercent' + str(calcPercent))
     print('validateNrCategories' + str(validateNrCategories))
-    if validateNrCategories > 2:
+    if validateNrCategories != 2:
         flash('Wrong number of categories')
         for x in categories:
             x['percent'] = 0
@@ -169,22 +175,34 @@ def organize_post():
         return render_template('organize.html', categories=categories, percents=percents, contest_name=contest_name,
                                contest_rounds=contest_rounds)
     else:
-        if calcPercent > 100:
-            flash('More than 100%')
+        if calcPercent != 100:
+            flash('Different than 100%')
             for x in categories:
                 x['percent'] = 0
                 x['value'] = True
             return render_template('organize.html', categories=categories, percents=percents, contest_name=contest_name,
                                    contest_rounds=contest_rounds)
         else:
+            contests = Contest.query.all()
+            for contest in contests:
+                db.session.delete(contest)
+            db.session.commit()
             print(str(contest_name) + str(contest_rounds) + str(categories_names) + str(percentsToInsert))
             new_contest = Contest(id=random.randint(1, 100000), name=contest_name, rounds=contest_rounds,
                                   category1=categories_names[0], category2=categories_names[1], current_rounds_junior=0,
                                   current_rounds_senior=0, procent1=percentsToInsert[0], procent2=percentsToInsert[1])
-            #JuryVoted.query.all().delete()
+            jures = JuryVoted.query.all()
+            for jure in jures:
+                db.session.delete(jure)
             print(new_contest)
             db.session.add(new_contest)
             db.session.commit()
+    
+            contestants = Contestant.query.all()
+            if (len(contestants) != 0):
+                for cts in contestants:
+                    db.session.delete(cts)
+                db.session.commit()
             return redirect(url_for('main.add_contestant'))
 
 
@@ -196,6 +214,9 @@ def add_contestant():
 @routes.route('/add_contestant' , methods=[ 'POST'])
 def add_contestant_post():
     global i
+    if Contest.query.all() == []:
+        flash("No active contest")
+        return redirect(url_for('main.index'))
     contest = Contest.query.all()[0]
 
     if request.form.get('name_contestant') != None:
@@ -203,7 +224,7 @@ def add_contestant_post():
         age = request.form.get('age')
         description = request.form.get('description')
         i = random.randint(1000, 9999)
-        new_contestant = Contestant( id = i, name = contestant_name, age = int(age), description = description, round_no = 0, series_no = 0, grade = 0)
+        new_contestant = Contestant( id = i, name = contestant_name.strip(), age = int(age), description = description, round_no = 0, series_no = 0, grade = 0)
 
         db.session.add(new_contestant)
         db.session.commit()
@@ -229,6 +250,9 @@ def add_contestant_post():
 @routes.route('/game_opt', methods=['GET'])
 def game_opt():
     contestants = Contestant.query.all()
+    if Contest.query.all() == []:
+        flash("No active contest")
+        return redirect(url_for('main.index'))
     contest = Contest.query.all()[0]
     if contest.current_rounds_junior == contest.rounds and contest.current_rounds_senior == contest.rounds:
         flash("GAME HAS ENDED")
@@ -243,6 +267,9 @@ def game_opt_post():
     global current_series
     game = request.form.get('game')
     print(game)
+    if (Contest.query.all() == []):
+        flash("No contest")
+        return redirect(url_for('main.index'))
     contest = Contest.query.all()[0]
     contestants = Contestant.query.all()
     jury = User.query.filter_by(type_user=2)
@@ -253,15 +280,23 @@ def game_opt_post():
         db.session.commit()
         return render_template('game_opt.html', contestants=contestants, current_round = [contest.current_rounds_junior, contest.current_rounds_senior])
     if game == 'start_game':
+        print(contest.active_round)
+        if contest.active_round != -1:
+            flash("A round is still in progress!")
+            return render_template('game_opt.html', contestants=contestants, current_round = [contest.current_rounds_junior, contest.current_rounds_senior])
         current_series = request.form.get('select_series')
-        if current_series == 'senior':
+       
+        if current_series == 'senior' and contest.current_rounds_senior < contest.rounds:
+            contest.active_round = 1
             contest.current_rounds_senior += 1
             #trecem prin toti seniorii si facem +1
             for contestant in contestants:
                 if contestant.age >= 25 and contestant.round_no != -1:
                     contestant.round_no = contest.current_rounds_senior
                     JuryVoted.query.filter_by(contestant_name=contestant.name).delete()
-        elif current_series == 'junior':
+
+        elif current_series == 'junior' and contest.current_rounds_junior < contest.rounds :
+            contest.active_round = 0
             contest.current_rounds_junior += 1
             for contestant in contestants:
                 if contestant.age < 25  and contestant.round_no != -1:
@@ -269,8 +304,20 @@ def game_opt_post():
                     JuryVoted.query.filter_by(contestant_name=contestant.name).delete()
         db.session.commit()
         return redirect(url_for('main.index'))
+
     elif game == 'finish_game':
-        contestants = Contestant.query.all()
+        if contest.active_round == -1:
+            flash("No round is in progress")
+            return render_template('game_opt.html', contestants=contestants, current_round = [contest.current_rounds_junior, contest.current_rounds_senior])
+        contest.active_round = -1
+        current_series = request.form.get('select_series')
+
+        if current_series == 'junior':
+            contestants = Contestant.query.filter(Contestant.age < 25).all()
+
+        elif current_series == 'senior':
+            contestants = Contestant.query.filter(Contestant.age >= 25).all()
+            print(contestants)
         for cts in contestants:
             if cts.round_no != -1 and cts.grade < 2.5 + cts.round_no*(1.8/contest.rounds):
                 cts.round_no = -1
@@ -284,3 +331,16 @@ def game_opt_post():
 def winners():
     return render_template('winners.html')
     
+@routes.route('/jury_opt', methods=['GET'])
+def jury_opt():
+    juries = User.query.filter_by(type_user=2).all()
+    return render_template('jury_opt.html', juries=juries)
+
+@routes.route('/jury_opt', methods=['POST'])
+def jury_opt_post():
+    if request.form.get('disq') != None:
+        disq_jury = request.form.get('disq')
+        User.query.filter_by(name=disq_jury).delete()
+        db.session.commit()
+        juries = User.query.filter_by(type_user=2).all()
+        return render_template('jury_opt.html', juries=juries)

@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
 class Contestant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000), unique=True)
-    age = db.Column(db.Integer)
+    age = db.Column(db.Integer) 
     description = db.Column(db.String(1000))
     round_no = db.Column(db.Integer)
     series_no = db.Column(db.Integer)
@@ -33,6 +33,7 @@ class Contest(db.Model):
     current_rounds_senior = db.Column(db.Integer)
     procent1 = db.Column(db.Integer)
     procent2 = db.Column(db.Integer)
+    active_round = db.Column(db.Integer, default = -1) # 0 - junior, 1 - senior, -1 -> niciuna
 
 
 

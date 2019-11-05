@@ -45,6 +45,11 @@ def signup_post():
     if user:
         flash('Email address already exists')
         return redirect(url_for('auth.signup'))
+    
+    user = User.query.filter_by(name=name).first()
+    if user:
+        flash('Username already taken')
+        return redirect(url_for('auth.signup'))
 
     new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'), type_user=type_user)
 
@@ -63,13 +68,16 @@ def give_perm():
 def give_perm_post():
     
     name = request.form.get('username')
-    flash(name)
     global jury_no
     print(request.form.get('jury'))
     if request.form.get('jury') == 'on':
         user = User.query.filter_by(name=name).first()
+        if user is None:
+            flash("User does not exist")
+            return render_template('give_perm.html')
         #print("before " + str(user.name) + " " + str(user.type_user))
         user.type_user = 2
+        print(user)
     elif request.form.get('organizer') == 'on':
         user = User.query.filter_by(name=name).first()
         print("before " + str(user.name) + " " + str(user.type_user))

@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<h2 style = "position: absolute; top: -50px; font-size: larger">
+	Current round: {% if contestActive == 0 %} Junior
+					{% elif contestActive == 1%} Senior
+					{% else %} No active round
+					{% endif %}
+</h2>
 <h1 class="title">
 	<!-- <script type="text/javascript" src="vote.js"></script> -->
 	{{ contestName }}
