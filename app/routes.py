@@ -312,7 +312,7 @@ def game_opt_post():
         juniors = Contestant.query.filter(Contestant.age < 25, Contestant.round_no != -1).all()
         print(juniors)
 
-        if current_series == 'senior' and contest.current_rounds_senior < contest.rounds and seniors != []:
+        if current_series == 'senior' and contest.current_rounds_senior < contest.rounds and len(seniors) > 1:
             contest.active_round = 1
             last_round = -1
             contest.current_rounds_senior += 1
@@ -323,7 +323,7 @@ def game_opt_post():
                     contestant.round_no = contest.current_rounds_senior
                     JuryVoted.query.filter_by(contestant_name=contestant.name).delete()
 
-        elif current_series == 'junior' and contest.current_rounds_junior < contest.rounds and juniors != []:
+        elif current_series == 'junior' and contest.current_rounds_junior < contest.rounds and len(juniors) > 1:
             contest.active_round = 0
             last_round = -1
             contest.current_rounds_junior += 1
