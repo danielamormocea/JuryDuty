@@ -38,7 +38,9 @@
                     <button type="submit" name="game" class="btn btn-outline-dark" value="finish_game"> Finish </button> 
                 </form>
 
-
+                {% for msg in get_flashed_messages() %}
+                    {{ msg }}
+                {% endfor %}
         </div>
     </div>
 </div>

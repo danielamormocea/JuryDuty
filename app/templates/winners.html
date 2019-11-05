@@ -2,60 +2,67 @@
 {% extends "base.html" %}
 
 {% block content %}
+<form method="POST" action="/winners">
+<button type="submit" name="return" value="return" class="btn-sm btn btn-warning"> BACK </button>
+</form>
 <h1>Winners of the current round</h1>
 <br>
 <br>
+
 <div class="container">
+    {% if juniors | length == 0 and seniors | length == 0 %}
+        <h2>No participant passed the previous round. Game has ended for the current series with no winners.</h2>
+    {% endif %}
+    {% if final == True %}
+        Game has ended. These are the final rankings
+    {% endif %}
         <div class="row">
             <div class="col">
-                <h2>Juniors</h2>
-                <table class="table">
-                    <thead class="black white-text" style="background-color: #d3ac2e !important">
-                    <tr>
-                        <th scope="col" style="color:white !important">#</th>
-                        <th scope="col" style="color:white !important">Name</th>
-                        <th scope="col" style="color:white !important">Grade</th>
-                    </tr>
-                    </thead>
-                    <tbody style="background-color:rgb(231, 211, 189) !important">
-                        {% for contestant in contestants %}
-                            {% if contestant.round_no != -1 and contestant.series_no == 0 %}
-                                <tr>
-                                    <th scope="row"> {{ contestant.id }} </th>
-                                    <td> {{ contestant.name }} </td>
-                                    <td> {{ contestant.grade }} </td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-{#                    {% if len(contestants) > 1 %}#}
-{#                        <button class="btn btn-secondary"#}
-{#                    {% endif %}#}
-                </table>
+                {% if current_series == 'junior' or final == True %}
+                    <h2>Juniors</h2>
+                    <table class="table">
+                        <thead class="black white-text" style="background-color: #d3ac2e !important">
+                        <tr>
+                            <th scope="col" style="color:white !important">#Rank</th>
+                            <th scope="col" style="color:white !important">Name</th>
+                            <th scope="col" style="color:white !important">Grade</th>
+                        </tr>
+                        </thead>
+                        <tbody style="background-color:rgb(231, 211, 189) !important">
+                            {% for i in range(juniors | length) %}
+                                    <tr>
+                                        <th scope="row"> {{ i+1 }} </th>
+                                        <td> {{ juniors[i].name }} </td>
+                                        <td> {{ juniors[i].grade }} </td>
+                                    </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {%  endif %}
             </div>
             <div class="col">
-                <h2>Seniors</h2>
+                {% if current_series == 'senior' or final == True %}
+                    <h2>Seniors</h2>
 
-                <table class="table">
-                    <thead class="black white-text" style="background-color: #d3ac2e !important">
-                    <tr>
-                        <th scope="col" style="color:white !important">#</th>
-                        <th scope="col" style="color:white !important">Name</th>
-                        <th scope="col" style="color:white !important">Grade</th>
-                    </tr>
-                    </thead>
-                    <tbody style="background-color:rgb(231, 211, 189) !important">
-                        {% for contestant in contestants %}
-                            {% if contestant.round_no != -1 and contestant.series_no == 1%}
+                    <table class="table">
+                        <thead class="black white-text" style="background-color: #d3ac2e !important">
+                        <tr>
+                            <th scope="col" style="color:white !important">#Rank</th>
+                            <th scope="col" style="color:white !important">Name</th>
+                            <th scope="col" style="color:white !important">Grade</th>
+                        </tr>
+                        </thead>
+                        <tbody style="background-color:rgb(231, 211, 189) !important">
+                            {% for i in range(seniors | length) %}
                                 <tr>
-                                    <th scope="row"> {{ contestant.id }} </th>
-                                    <td> {{ contestant.name }} </td>
-                                    <td> {{ contestant.grade }} </td>
+                                    <th scope="row"> {{ i+1 }} </th>
+                                    <td> {{ seniors[i].name }} </td>
+                                    <td> {{ seniors[i].grade }} </td>
                                 </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
             </div>
         </div>
 </div>

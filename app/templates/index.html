@@ -1,11 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 style = "position: absolute; top: -50px; font-size: larger">
+{% for msg in get_flashed_messages() %}
+    {{ msg }}
+{% endfor %}
+<h2 style = "position: absolute; top: -60px; font-size: larger">
 	Current round: {% if contestActive == 0 %} Junior
 					{% elif contestActive == 1%} Senior
 					{% else %} No active round
+						{% if last_round != -1 %}
+							<form method="POST" action="/">
+								<button type="submit" name="winners" value="winners" class="btn-sm btn btn-warning"> Go To Winners </button>
+							</form>
+						{% endif %}
 					{% endif %}
 </h2>
+
 <h1 class="title">
 	<!-- <script type="text/javascript" src="vote.js"></script> -->
 	{{ contestName }}

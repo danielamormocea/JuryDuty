@@ -4,5 +4,8 @@
 {% block content %}
 <h1 class="title">
 	Welcome
+	{% for msg in get_flashed_messages() %}
+    	{{ msg }}
+	{% endfor %}
 </h1>
 {% endblock %}

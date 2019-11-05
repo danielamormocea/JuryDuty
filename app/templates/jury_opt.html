@@ -6,9 +6,9 @@
     <div class="row">
         <div class="col">
             <br>
-            <form method="POST" action="/game_opt">
+            <form method="POST" action="/jury_opt">
                 {% for jury in juries %}
-                        {{ jury.name }} <button type="submit" name="disq" value="{{jury.name}}" class="btn-sm btn btn-danger"> Kick </button>
+                        {{ jury.name }} <button type="submit" name="kick" value="{{jury.name}}" class="btn-sm btn btn-danger"> Kick </button>
                         <br>
                         <br>
                 {% endfor %}
